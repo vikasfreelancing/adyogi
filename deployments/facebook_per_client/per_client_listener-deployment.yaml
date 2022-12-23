@@ -1,0 +1,41 @@
+###
+### A complete description of a Prefect Deployment for flow 'per_client_listener'
+###
+name: per_client_listener
+description: null
+version: dd0ce6a0f2c4596e2777faffcf6970a8
+# The work queue that will handle this deployment's runs
+work_queue_name: per_client_listener
+tags: []
+parameters: {}
+schedule: null
+infra_overrides: {}
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  working_dir: null
+  block_type_slug: process
+  _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: per_client_listener
+manifest_path: null
+storage: null
+path: /Users/vikasvashistha/prefect-tutorial/adyogi/deployments/facebook_per_client
+entrypoint: facebook_per_client.py:per_client_listener
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties:
+    client_id:
+      title: client_id
+      type: string
+  required:
+  - client_id
+  definitions: null

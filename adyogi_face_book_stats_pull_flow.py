@@ -1,18 +1,27 @@
+import asyncio
 import sys
 from prefect import flow, task, get_run_logger
 from utilities import AN_IMPORTED_MESSAGE, pull_facebook_clients, \
     fetch_all_report_of_client, fetch_report_per_client
 from data import clients
-import asyncio
+from prefect import get_client
+
+
+@flow(name="root_flow")
+async def mainFlow():
+    async with get_client() as client:
+        depl_id = "5d7f2a0d-7957-47a9-8290-1af8e893b53e"
+        response = await client.create_flow_run_from_deployment(depl_id)
+        print(response)
 
 
 @flow(name="facebook_stats_pull")
-def facebook_stats_pull():
+async def facebook_stats_pull():
     print("inside facebook_stats_pull flow")
     client_ids = pull_facebook_clients.submit().result()
-    print(client_ids)
     for client_id in client_ids:
         per_client_listener(client_id)
+        #
     print("Flow completed ", clients)
 
 
@@ -35,7 +44,7 @@ def fetch_client_report(client_id: str, report_id: str):
 
 
 if __name__ == "__main__":
-    facebook_stats_pull()
+    asyncio.run(mainFlow())
 
 # 1. Facebook Stats
 #    a.)Google Cloud SCheduler
