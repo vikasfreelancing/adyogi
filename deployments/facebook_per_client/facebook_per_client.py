@@ -1,10 +1,13 @@
 from datetime import datetime
 
 from prefect import flow, task
+from prefect.engine import pause_flow_run, resume_flow_run
+from prefect.exceptions import NotPausedError
 
 
 @flow(name="per_client_listener", retries=3)
-def per_client_listener(client_id: str):
+def per_client_listener(client_id: str, called_flow_id: str):
+    print("called flow id :", called_flow_id)
     print("Inside per_client_listener ", client_id)
     report_ids = fetch_all_report_of_client(client_id)
     print(report_ids)
@@ -15,6 +18,12 @@ def per_client_listener(client_id: str):
     for res in results:
         if res.result == 'failure':
             raise Exception("One of the report is not processed")
+
+    try:
+        resume_flow_run(called_flow_id)
+    except NotPausedError:
+        print("Called flow already started ignoring notify")
+
     return 'success'
 
 

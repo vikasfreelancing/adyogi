@@ -3,7 +3,7 @@
 ###
 name: per_client_listener
 description: null
-version: dd0ce6a0f2c4596e2777faffcf6970a8
+version: 34fa95dc575ed1fff5dfbd981915d0f8
 # The work queue that will handle this deployment's runs
 work_queue_name: per_client_listener
 tags: []
@@ -36,6 +36,10 @@ parameter_openapi_schema:
     client_id:
       title: client_id
       type: string
+    called_flow_id:
+      title: called_flow_id
+      type: string
   required:
   - client_id
+  - called_flow_id
   definitions: null
