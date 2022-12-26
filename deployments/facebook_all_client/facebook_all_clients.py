@@ -4,6 +4,10 @@ from prefect import flow, task
 from prefect import flow
 from prefect import get_client
 from datetime import datetime
+from prefect.deployments import run_deployment
+from prefect.client.schemas import FlowRun
+from prefect.client.schemas import State
+from prefect.engine import pause_flow_run,resume_flow_run
 
 clients = {
     "client_1": {
@@ -109,12 +113,20 @@ async def pull_facebook_clients():
 async def facebook_stats_pull():
     print("inside facebook_stats_pull flow")
     client_ids = await pull_facebook_clients()
+    responses = []
     for client_id in client_ids:
         print("calling")
         dep_id = '7c97e4ab-d34e-4730-a88c-9aafec0b686a'
         param = {'client_id': client_id}
-        async with get_client() as client:
-            await client.create_flow_run_from_deployment(dep_id, parameters=param)
+        responses.append(await run_deployment('per_client_listener/per_client_listener',
+                                              flow_run_name='per_client_listener/per_client_listener' + "_" + client_id,
+                                              timeout=0,
+                                              parameters=param))
+    for res in responses:
+        while not res.state.is_final():
+            async with get_client() as client:
+                res = await client.read_flow_run(res.id)
+            await asyncio.sleep(1)
     print("Flow completed ", clients)
 
 

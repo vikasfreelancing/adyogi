@@ -3,7 +3,7 @@ from datetime import datetime
 from prefect import flow, task
 
 
-@flow(name="per_client_listener")
+@flow(name="per_client_listener", retries=3)
 def per_client_listener(client_id: str):
     print("Inside per_client_listener ", client_id)
     report_ids = fetch_all_report_of_client(client_id)
@@ -18,7 +18,7 @@ def per_client_listener(client_id: str):
     return 'success'
 
 
-@task(name="fetch_all_report_of_client" + datetime.now().strftime("%H:%M:%S"))
+@task(name="fetch_all_report_of_client" + datetime.now().strftime("%H:%M:%S"), retries=3)
 def fetch_all_report_of_client(client_id: str):
     print("fetch_all_report_of_client", client_id)
     return clients.get(client_id).get('reports')
