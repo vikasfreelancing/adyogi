@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from prefect import flow, task
-from prefect.engine import pause_flow_run, resume_flow_run
+from prefect.engine import resume_flow_run
 from prefect.exceptions import NotPausedError
 
 
